@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dice Tower</title>
+
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+        }
+        #diceResult {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-size: 32px;
+            font-family: Arial, sans-serif;
+            z-index: 1000;
+        }
+    </style>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.181.1/build/three.module.js",
+            "cannon-es": "https://cdn.jsdelivr.net/npm/cannon-es@0.20.0/dist/cannon-es.js"
+        }
+    }
+    
+    </script>
+</head>
+
+<body>
+    <div id="diceResult" style="
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        font-size: 30px;
+        color: white;
+        font-family: Arial;
+        z-index: 1000;
+    ">
+        -
+    </div>
+    <script type="module" src="./js/main.js"></script>
+    
+</body>
+</html>
