@@ -96,7 +96,7 @@ export function createScene() {
 
     floor.rotation.x = -Math.PI / 2;
 
-    floor.position.y = -1;
+    floor.position.y = 0;
 
     scene.add(floor);
 
