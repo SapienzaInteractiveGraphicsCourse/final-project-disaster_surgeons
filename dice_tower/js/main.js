@@ -5,6 +5,7 @@ import { createScene } from './scene.js';
 
 
 const { scene, cube } = createScene();
+//cube.scale.set(3, 3, 3);
 
 const resultUI = document.getElementById("diceResult");
 //resultUI.innerText = "CIAO";

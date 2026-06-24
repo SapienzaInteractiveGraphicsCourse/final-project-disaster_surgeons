@@ -25,13 +25,20 @@ export function createScene() {
 
 
     const geometry = new THREE.BoxGeometry();
+    console.log(geometry.groups);
 
     
-    const material = new THREE.MeshStandardMaterial({
-        color: 0x00ff00
-    });
+    const materials = [
+        new THREE.MeshStandardMaterial({ color: 0xff0000 }), // faccia 1
+        new THREE.MeshStandardMaterial({ color: 0x00ff00 }), // faccia 2
+        new THREE.MeshStandardMaterial({ color: 0x0000ff }), // faccia 3
+        new THREE.MeshStandardMaterial({ color: 0xffff00 }), // faccia 4
+        new THREE.MeshStandardMaterial({ color: 0xff00ff }), // faccia 5
+        new THREE.MeshStandardMaterial({ color: 0x00ffff })  // faccia 6
+    ];
 
-    const cube = new THREE.Mesh(geometry, material);
+
+    const cube = new THREE.Mesh(geometry, materials);
     const edges = new THREE.EdgesGeometry(geometry);
     const lineMaterial = new THREE.LineBasicMaterial({ color: 0x000000 });
     const wireframe = new THREE.LineSegments(edges, lineMaterial);
