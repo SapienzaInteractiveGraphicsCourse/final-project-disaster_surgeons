@@ -1,5 +1,87 @@
 import * as THREE from 'three';
 
+function drawPip(ctx, x, y) {
+    ctx.beginPath();
+    ctx.arc(x, y, 18, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+function createDiceFaceTexture(number) {
+
+    const canvas = document.createElement('canvas');
+
+    canvas.width = 256;
+    canvas.height = 256;
+
+    const ctx = canvas.getContext('2d');
+
+    // sfondo bianco
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, 256, 256);
+
+    // bordo nero
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 8;
+    ctx.strokeRect(0, 0, 256, 256);
+
+    // numero
+    ctx.fillStyle = 'black';
+    ctx.fillStyle = 'black';
+
+    ctx.fillStyle = 'black';
+
+    const center = 128;
+    const offset = 70;
+
+    // ⚀
+    if (number === 1) {
+        drawPip(ctx, center, center);
+    }
+
+    // ⚁
+    if (number === 2) {
+        drawPip(ctx, center - offset, center - offset);
+        drawPip(ctx, center + offset, center + offset);
+    }
+
+    // ⚂
+    if (number === 3) {
+        drawPip(ctx, center - offset, center - offset);
+        drawPip(ctx, center, center);
+        drawPip(ctx, center + offset, center + offset);
+    }
+
+    // ⚃
+    if (number === 4) {
+        drawPip(ctx, center - offset, center - offset);
+        drawPip(ctx, center + offset, center - offset);
+        drawPip(ctx, center - offset, center + offset);
+        drawPip(ctx, center + offset, center + offset);
+    }
+
+    // ⚄
+    if (number === 5) {
+        drawPip(ctx, center - offset, center - offset);
+        drawPip(ctx, center + offset, center - offset);
+        drawPip(ctx, center, center);
+        drawPip(ctx, center - offset, center + offset);
+        drawPip(ctx, center + offset, center + offset);
+    }
+
+    // ⚅
+    if (number === 6) {
+        drawPip(ctx, center - offset, center - offset);
+        drawPip(ctx, center + offset, center - offset);
+        drawPip(ctx, center - offset, center);
+        drawPip(ctx, center + offset, center);
+        drawPip(ctx, center - offset, center + offset);
+        drawPip(ctx, center + offset, center + offset);
+    }
+
+
+    return new THREE.CanvasTexture(canvas);
+}
+
 export function createScene() {
     const scene = new THREE.Scene();
     const floorGeometry = new THREE.PlaneGeometry(20, 20);
@@ -29,12 +111,12 @@ export function createScene() {
 
     
     const materials = [
-        new THREE.MeshStandardMaterial({ color: 0xff0000 }), // faccia 1
-        new THREE.MeshStandardMaterial({ color: 0x00ff00 }), // faccia 2
-        new THREE.MeshStandardMaterial({ color: 0x0000ff }), // faccia 3
-        new THREE.MeshStandardMaterial({ color: 0xffff00 }), // faccia 4
-        new THREE.MeshStandardMaterial({ color: 0xff00ff }), // faccia 5
-        new THREE.MeshStandardMaterial({ color: 0x00ffff })  // faccia 6
+        new THREE.MeshStandardMaterial({ map: createDiceFaceTexture(2) }), // +X
+        new THREE.MeshStandardMaterial({ map: createDiceFaceTexture(5) }), // -X
+        new THREE.MeshStandardMaterial({ map: createDiceFaceTexture(1) }), // +Y
+        new THREE.MeshStandardMaterial({ map: createDiceFaceTexture(6) }), // -Y
+        new THREE.MeshStandardMaterial({ map: createDiceFaceTexture(3) }), // +Z
+        new THREE.MeshStandardMaterial({ map: createDiceFaceTexture(4) })  // -Z
     ];
 
 
