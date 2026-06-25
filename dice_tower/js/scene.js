@@ -84,7 +84,7 @@ function createDiceFaceTexture(number) {
 
 export function createScene() {
     const scene = new THREE.Scene();
-    const floorGeometry = new THREE.PlaneGeometry(20, 20);
+    const floorGeometry = new THREE.PlaneGeometry(40, 20);
 
     const floorMaterial = new THREE.MeshStandardMaterial({
         color: 0x888888,

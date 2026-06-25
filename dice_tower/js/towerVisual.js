@@ -6,6 +6,15 @@ export function createTowerVisual(scene) {
     const height = 12;
     const thickness = 0.2;
 
+    // =========================
+    // ROOT (HIERARCHICAL MODEL)
+    // =========================
+    const towerGroup = new THREE.Group();
+    scene.add(towerGroup);
+
+    // =========================
+    // MATERIALS
+    // =========================
     const material = new THREE.MeshStandardMaterial({
         color: 0x888888,
         roughness: 0.8,
@@ -19,44 +28,135 @@ export function createTowerVisual(scene) {
         wireframe: true
     });
 
-    const half = size;
+    // =========================
+    // BASE
+    // =========================
+    const floorGeo = new THREE.BoxGeometry(size * 2, thickness, size * 2);
+    const base = new THREE.Mesh(floorGeo, material);
+    base.position.set(0, thickness / 2, 0);
 
-    const baseY = thickness / 2;
-    const wallY = height / 2 + thickness / 2;
+    towerGroup.add(base);
 
-    // geometrie
+    // =========================
+    // WALLS GROUP
+    // =========================
+    const wallsGroup = new THREE.Group();
+    towerGroup.add(wallsGroup);
+
     const wallX = new THREE.BoxGeometry(thickness, height, size * 2);
     const wallZ = new THREE.BoxGeometry(size * 2, height, thickness);
-    const floor = new THREE.BoxGeometry(size * 2, thickness, size * 2);
 
-    // BASE
-    const base = new THREE.Mesh(floor, material);
-    base.position.set(0, baseY, 0);
-    scene.add(base);
+    const wallY = height / 2 + thickness / 2;
+    const half = size;
 
-    // PARETI
     const left = new THREE.Mesh(wallX, material);
     left.position.set(-half, wallY, 0);
-    scene.add(left);
+    wallsGroup.add(left);
 
     const right = new THREE.Mesh(wallX, material);
     right.position.set(half, wallY, 0);
-    scene.add(right);
+    wallsGroup.add(right);
 
     const front = new THREE.Mesh(wallZ, material);
     front.position.set(0, wallY, -half);
-    scene.add(front);
+    wallsGroup.add(front);
 
     const back = new THREE.Mesh(wallZ, material);
     back.position.set(0, wallY, half);
-    scene.add(back);
+    wallsGroup.add(back);
 
-    // TETTO
-    const roof = new THREE.Mesh(floor, material);
-    roof.position.set(0, height + baseY, 0);
-    scene.add(roof);
+    // =====================
+    // =====================
+    // FINESTRE
+    // =====================
+    const windowMaterial = new THREE.MeshStandardMaterial({
+        color: 0x222244,
+        transparent: true,
+        opacity: 0.6
+    });
 
-    // RAMPA (VISUALE)
+    const windowGeo = new THREE.BoxGeometry(0.6, 0.6, 0.1);
+
+    function addWindow(x, y, z, rotY = 0) {
+        const w = new THREE.Mesh(windowGeo, windowMaterial);
+        w.position.set(x, y, z);
+        w.rotation.y = rotY;
+        wallsGroup.add(w);
+    }
+
+    // lato frontale
+    addWindow(-1, 6, half + 0.11);
+    addWindow(1, 6, half + 0.11);
+    addWindow(0, 8, half + 0.11);
+
+    // lato sinistro
+    addWindow(-half - 0.11, 5, 0, Math.PI / 2);
+    addWindow(-half - 0.11, 8, 0, Math.PI / 2);
+
+    // ARCO FRONTALE
+    // =====================
+    const archGroup = new THREE.Group();
+    towerGroup.add(archGroup);
+
+    const archMaterial = new THREE.MeshStandardMaterial({
+        color: 0x666666,
+        roughness: 0.9
+    });
+
+    // base porta
+    const doorBaseGeo = new THREE.BoxGeometry(2, 2, thickness);
+    const doorBase = new THREE.Mesh(doorBaseGeo, archMaterial);
+    doorBase.position.set(0, 1, half + thickness / 2);
+    archGroup.add(doorBase);
+
+    // parte curva (semi arco)
+    const archGeo = new THREE.CylinderGeometry(1, 1, thickness, 32, 1, false, 0, Math.PI);
+    const archTop = new THREE.Mesh(archGeo, archMaterial);
+
+    archTop.rotation.z = Math.PI / 2;
+    archTop.position.set(0, 2, half + thickness / 2);
+
+    archGroup.add(archTop);
+
+    // =========================
+    // ROOF
+    // =========================
+    const roof = new THREE.Mesh(floorGeo, material);
+    roof.position.set(0, height + thickness / 2, 0);
+    towerGroup.add(roof);
+    // =====================
+    // MERLI SUL TETTO
+    // =====================
+    const crenelGroup = new THREE.Group();
+    towerGroup.add(crenelGroup);
+
+    const crenelGeo = new THREE.BoxGeometry(0.6, 0.8, 0.6);
+    const crenelMaterial = new THREE.MeshStandardMaterial({ color: 0x777777 });
+
+    const count = 8;
+    const radius = size;
+
+    for (let i = 0; i < count; i++) {
+
+        const angle = (i / count) * Math.PI * 2;
+
+        const x = Math.cos(angle) * radius;
+        const z = Math.sin(angle) * radius;
+
+        const crenel = new THREE.Mesh(crenelGeo, crenelMaterial);
+
+        crenel.position.set(x, height + 0.6, z);
+
+        crenel.lookAt(0, height, 0);
+
+        crenelGroup.add(crenel);
+    }
+
+    // =========================
+    // RAMPS GROUP
+    // =========================
+    const rampsGroup = new THREE.Group();
+    towerGroup.add(rampsGroup);
 
     const levels = 4;
     const stepY = height / levels;
@@ -64,40 +164,46 @@ export function createTowerVisual(scene) {
     const rampLength = size * 1.5;
     const rampThickness = 0.1;
 
-    // geometria (Three usa size reale, non half-extents)
     const rampGeo = new THREE.BoxGeometry(
         rampLength,
         rampThickness,
         size * 2
     );
 
-    const ramp = new THREE.Mesh(rampGeo, rampMaterial);
-
-    // attaccata al muro sinistro (coerente con cannon: x = -size + rampHalfX)
     const rampHalf = rampLength / 2;
-    const rampX = size - rampHalf;
 
-    ramp.position.set(rampX, height - stepY, 0);
+    // =========================
+    // RAMPA 1
+    // =========================
+    const ramp1 = new THREE.Mesh(rampGeo, rampMaterial);
 
-    // stessa inclinazione della fisica
-    ramp.rotation.z = 0.7;
-
-    scene.add(ramp);
-
-    const ramp2 = new THREE.Mesh(rampGeo, rampMaterial);
-
-    // stesso posizionamento CANNON
-    const ramp2X = -size + rampHalf;
-    const ramp2Y = height - stepY - 5;
-
-    ramp2.position.set(
-        ramp2X,
-        ramp2Y,
+    ramp1.position.set(
+        size - rampHalf + 0.75,
+        height - stepY,
         0
     );
 
-    // stessa inclinazione opposta
+    ramp1.rotation.z = 0.7;
+
+    rampsGroup.add(ramp1);
+
+    // =========================
+    // RAMPA 2
+    // =========================
+    const ramp2 = new THREE.Mesh(rampGeo, rampMaterial);
+
+    ramp2.position.set(
+        -size + rampHalf - 0.75,
+        height - stepY - 5,
+        0
+    );
+
     ramp2.rotation.z = -0.7;
 
-    scene.add(ramp2);
+    rampsGroup.add(ramp2);
+
+    // =========================
+    // RETURN ROOT
+    // =========================
+    return towerGroup;
 }

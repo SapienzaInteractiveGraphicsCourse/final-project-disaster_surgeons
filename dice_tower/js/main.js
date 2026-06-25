@@ -3,29 +3,29 @@ import * as CANNON from 'cannon-es';
 import { OrbitControls } from 'https://unpkg.com/three@0.181.1/examples/jsm/controls/OrbitControls.js';
 
 import { createScene } from './scene.js';
-import { createTower } from './tower.js';
-import { createTowerVisual } from './towerVisual.js';
-
-// -------------------- SCENA --------------------
-const { scene, cube } = createScene();
-createTowerVisual(scene);
-
-// -------------------- UI --------------------
-const resultUI = document.getElementById("diceResult");
-const dropBtn = document.getElementById("dropDice");
+import { TowerModel } from './DiceTower.js';
 
 // -------------------- WORLD --------------------
 const world = new CANNON.World();
 world.gravity.set(0, -9.82, 0);
 
-// ground
+// -------------------- SCENA --------------------
+const { scene, cube } = createScene();
+
+// -------------------- TORRE (MODELLO UNICO) --------------------
+const tower = new TowerModel();
+tower.buildCannon(world);
+const towerMesh = tower.buildThree(scene);
+
+// -------------------- UI --------------------
+const resultUI = document.getElementById("diceResult");
+const dropBtn = document.getElementById("dropDice");
+
+// -------------------- GROUND --------------------
 const groundBody = new CANNON.Body({ mass: 0 });
 groundBody.addShape(new CANNON.Plane());
 groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
 world.addBody(groundBody);
-
-// tower physics
-createTower(world);
 
 // -------------------- DADO --------------------
 const cubeBody = new CANNON.Body({
@@ -33,7 +33,7 @@ const cubeBody = new CANNON.Body({
     shape: new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5))
 });
 
-cubeBody.position.set(0, 15, 0);
+cubeBody.position.set(3, 15, 0);
 cubeBody.angularDamping = 0.4;
 cubeBody.linearDamping = 0.2;
 
@@ -46,6 +46,7 @@ const camera = new THREE.PerspectiveCamera(
     0.1,
     1000
 );
+
 camera.position.z = 5;
 
 // -------------------- RENDERER --------------------
@@ -84,7 +85,7 @@ function dropDice() {
     cubeBody.velocity.set(0, 0, 0);
     cubeBody.angularVelocity.set(0, 0, 0);
 
-    cubeBody.position.set(0, 15, 0);
+    cubeBody.position.set(3, 15, 0);
     cubeBody.quaternion.set(0, 0, 0, 1);
 
     cubeBody.wakeUp();
@@ -98,10 +99,10 @@ function dropDice() {
     );
 }
 
-// button event
+// -------------------- BUTTON --------------------
 dropBtn.addEventListener("click", dropDice);
 
-// spacebar (vecchio comportamento)
+// spacebar
 window.addEventListener("keydown", (event) => {
     if (event.code === "Space") lanciaDado();
 });
@@ -161,6 +162,10 @@ function animate() {
         const value = faceValues[face];
 
         resultUI.innerText = "Risultato: " + value;
+        if (value == 1) {
+            tower.collapse();
+            //tower.collapseVisual(scene);
+        }
     }
 }
 

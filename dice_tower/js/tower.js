@@ -2,6 +2,17 @@ import * as CANNON from 'cannon-es';
 
 export function createTower(world) {
 
+    // =========================
+    // ROOT MODEL (LOGICAL)
+    // =========================
+    const tower = {
+        bodies: {
+            base: null,
+            walls: [],
+            ramps: []
+        }
+    };
+
     const thickness = 0.2;
     const height = 12;
     const size = 4;
@@ -11,57 +22,85 @@ export function createTower(world) {
     const baseY = thickness / 2;
     const wallY = height / 2 + thickness / 2;
 
-    function addWall(x, y, z, w, h, d) {
-        const wall = new CANNON.Body({
+    // =========================
+    // HELPERS
+    // =========================
+    function addBody(body, group) {
+        world.addBody(body);
+        group.push(body);
+    }
+
+    function createBox(x, y, z, w, h, d) {
+        const body = new CANNON.Body({
             mass: 0,
             shape: new CANNON.Box(new CANNON.Vec3(w, h, d))
         });
 
-        wall.position.set(x, y, z);
-        world.addBody(wall);
+        body.position.set(x, y, z);
+        return body;
     }
 
-    // BASE
-    addWall(0, baseY, 0, size, thickness, size);
-
-    // PARETI
-    addWall(-half, wallY, 0, thickness, height, size);
-    addWall(half, wallY, 0, thickness, height, size);
-    addWall(0, wallY, -half, size, height, thickness);
-    addWall(0, wallY, half, size, height, thickness);
-
-    // TETTO
-    //addWall(0, height + baseY, 0, size, thickness, size);
-
-    function addInclinedWall(x, y, z, w, h, d, rotZ) {
-        const wall = new CANNON.Body({
+    function createRamp(x, y, z, w, h, d, rotZ) {
+        const body = new CANNON.Body({
             mass: 0,
             shape: new CANNON.Box(new CANNON.Vec3(w, h, d))
         });
 
-        wall.position.set(x, y, z);
-        wall.quaternion.setFromEuler(0, 0, rotZ);
+        body.position.set(x, y, z);
+        body.quaternion.setFromEuler(0, 0, rotZ);
 
-        world.addBody(wall);
+        return body;
     }
 
+    // =========================
+    // BASE (HIERARCHICAL NODE)
+    // =========================
+    tower.bodies.base = createBox(
+        0, baseY, 0,
+        size, thickness, size
+    );
+
+    world.addBody(tower.bodies.base);
+
+    // =========================
+    // WALLS (HIERARCHICAL NODE)
+    // =========================
+    const left = createBox(-half, wallY, 0, thickness, height, size);
+    const right = createBox(half, wallY, 0, thickness, height, size);
+    const front = createBox(0, wallY, -half, size, height, thickness);
+    const back = createBox(0, wallY, half, size, height, thickness);
+
+    tower.bodies.walls.push(left, right, front, back);
+
+    left && world.addBody(left);
+    right && world.addBody(right);
+    front && world.addBody(front);
+    back && world.addBody(back);
+
+    // =========================
+    // RAMPS (HIERARCHICAL NODE)
+    // =========================
     const levels = 4;
     const stepY = height / levels;
 
-    const rampLength = size * 1.5; // lunghezza rampa
+    const rampLength = size * 1.5;
     const rampHalfX = rampLength / 2;
     const rampHalfZ = size;
     const rampThickness = 0.1;
 
-    // rampa attaccata al muro sinistro (x = -size)
-    const rampX = size - rampHalfX;
+    const ramp1 = createRamp(size - rampHalfX + 0.75,height - stepY,0,rampHalfX,rampThickness,rampHalfZ,0.7);
 
-    addInclinedWall(rampX,height - stepY,0,rampHalfX,rampThickness,rampHalfZ,0.7);
-    // seconda rampa (lato destro)
-    const ramp2X = -size + rampHalfX;
+    tower.bodies.ramps.push(ramp1);
+    world.addBody(ramp1);
 
-    // leggermente sotto la fine della prima
-    const ramp2Y = height - stepY - 5;
+    // RAMPA 2
+    const ramp2 = createRamp(-size + rampHalfX - 0.75,height - stepY - 5,0,rampHalfX,rampThickness,rampHalfZ,-0.7);
 
-    addInclinedWall(ramp2X,ramp2Y,0,rampHalfX,rampThickness,rampHalfZ,-0.7);
+    tower.bodies.ramps.push(ramp2);
+    world.addBody(ramp2);
+
+    // =========================
+    // RETURN ROOT
+    // =========================
+    return tower;
 }
