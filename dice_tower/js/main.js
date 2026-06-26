@@ -100,7 +100,26 @@ function dropDice() {
 }
 
 // -------------------- BUTTON --------------------
-dropBtn.addEventListener("click", dropDice);
+dropBtn.addEventListener("click", () => {
+
+    // 1. torre in idle → puoi lanciare dado
+    if (tower.state === "idle") {
+        dropDice();      
+        return;
+    }
+
+    // 2. in crollo → niente
+    if (tower.state === "collapsing") {
+        return;
+    }
+
+    // 3. già collassata → reset
+    if (tower.state === "collapsed") {
+        tower.reset(scene, world);
+        dropDice();
+        return;
+    }
+});
 
 // spacebar
 window.addEventListener("keydown", (event) => {

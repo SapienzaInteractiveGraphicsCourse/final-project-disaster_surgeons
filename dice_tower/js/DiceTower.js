@@ -1,6 +1,8 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es";
 
+const loader = new THREE.TextureLoader();
+
 export class TowerModel {
 
     constructor() {
@@ -26,6 +28,9 @@ export class TowerModel {
             walls: [],
             ramps: []
         };
+
+        this.state = "idle"; 
+
     }
 
     // ======================================================
@@ -131,11 +136,12 @@ export class TowerModel {
 
         const towerGroup = new THREE.Group();
         scene.add(towerGroup);
-
+        const stoneTexture = loader.load("https://threejs.org/examples/textures/brick_diffuse.jpg");
         const material = new THREE.MeshStandardMaterial({
-            color: 0x888888,
+            //color: 0x888888,
+            map: stoneTexture,
             roughness: 0.8,
-            metalness: 0.1,
+            //metalness: 0.1,
             transparent: true,
             opacity: 0.5
         });
@@ -253,20 +259,24 @@ export class TowerModel {
 
         return towerGroup;
     }
+
+    
     collapse() {
         const { towerGroup, wallsGroup, crenelGroup, rampsGroup } = this.visual;
 
         if (this._collapsing) return;
         this._collapsing = true;
+        this.state = "collapsing";
 
         let t = 0;
         let pieces = [];
         let startedFall = false;
 
-        const addGroup = (group, strength) => {
+        const addGroup = (group, type,strength) => {
             group.children.forEach((obj) => {
                 pieces.push({
                     obj,
+                    type,
                     vel: new THREE.Vector3(
                         (Math.random() - 0.5) * strength,
                         Math.random() * strength,
@@ -304,9 +314,36 @@ export class TowerModel {
 
                 startedFall = true;
 
-                addGroup(wallsGroup, 0.2);
-                addGroup(crenelGroup, 0.4);
-                addGroup(rampsGroup, 0.6);
+                wallsGroup.children.forEach((obj, i) => {
+
+                    let subtype = "wall";
+
+                    if (i === 0) subtype = "wall_left";
+                    if (i === 1) subtype = "wall_right";
+                    if (i === 2) subtype = "wall_front";
+                    if (i === 3) subtype = "wall_back";
+
+                    pieces.push({
+                        obj,
+                        type: subtype,
+
+                        vel: new THREE.Vector3(
+                            (Math.random() - 0.5) * 0.2,
+                            Math.random() * 0.2,
+                            (Math.random() - 0.5) * 0.2
+                        ),
+
+                        rotVel: new THREE.Vector3(
+                            (Math.random() - 0.5) * 0.2,
+                            (Math.random() - 0.5) * 0.2,
+                            (Math.random() - 0.5) * 0.2
+                        ),
+
+                        settled: false
+                    });
+                });
+                addGroup(crenelGroup, "crenel", 0.4);
+                addGroup(rampsGroup, "ramp", 0.6);
             }
 
             // -------------------------
@@ -342,18 +379,64 @@ export class TowerModel {
                     ) {
                         p.settled = true;
 
+                        // STOP TOTALE DINAMICA
                         p.vel.set(0, 0, 0);
                         p.rotVel.set(0, 0, 0);
 
+                        // IMPORTANTISSIMO: annulla rotazione residua “instabile”
                         p.obj.rotation.x = 0;
+                        p.obj.rotation.y = p.obj.rotation.y; // la manteniamo
                         p.obj.rotation.z = 0;
+
+                        if (p.type === "wall_left" || p.type === "wall_right") {
+                            p.obj.rotation.x = 0;
+                            p.obj.rotation.y = 0;
+                            p.obj.rotation.z = Math.PI / 2;
+                        }
+
+                        else if (p.type === "wall_front" || p.type === "wall_back") {
+                            p.obj.rotation.x = Math.PI / 2;
+                            p.obj.rotation.z = 0;
+                            p.obj.rotation.y = 0;
+                        }
+
+                        else if (p.type == "crenel") {
+                            p.obj.rotation.x = Math.PI / 2;
+                            p.obj.rotation.y = 0;
+                            p.obj.rotation.z = 0;
+                        }
+
+                        else if (p.type == "ramp") {
+                            p.obj.rotation.x = 0;
+                            p.obj.rotation.y = 0;
+                            p.obj.rotation.z = 0;
+                        }
+
+                        // IMPORTANTISSIMO: forza anche posizione stabile
+                        p.obj.position.y = groundY+0.1;
                     }
+                    
                 }
             });
 
             requestAnimationFrame(animate);
         };
-
+        this.state = "collapsed";
         animate();
+    }
+    reset(scene, world) {
+
+        const { towerGroup } = this.visual;
+
+        // rimuovi visuale
+        scene.remove(towerGroup);
+
+        // reset stato
+        this.state = "idle";
+        this._collapsing = false;
+
+        // ricostruisci
+        this.buildCannon(world);
+        this.buildThree(scene);
     }
 }
