@@ -82,14 +82,25 @@ function createDiceFaceTexture(number) {
     return new THREE.CanvasTexture(canvas);
 }
 
+const loader = new THREE.TextureLoader();
+
+
 export function createScene() {
     const scene = new THREE.Scene();
     const floorGeometry = new THREE.PlaneGeometry(40, 20);
 
+    const texture = loader.load("./textures/rocks.jpg");
+    // 
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+
+    texture.repeat.set(8, 8);
     const floorMaterial = new THREE.MeshStandardMaterial({
-        color: 0x888888,
+        //color: 0x888888,
+        map: texture,
         roughness: 0.9,
-        metalness: 0.0
+        //trasparent: true,
+        //metalness: 0.0
     });
 
     const floor = new THREE.Mesh(floorGeometry, floorMaterial);

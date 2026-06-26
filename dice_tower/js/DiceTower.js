@@ -136,7 +136,7 @@ export class TowerModel {
 
         const towerGroup = new THREE.Group();
         scene.add(towerGroup);
-        const stoneTexture = loader.load("https://threejs.org/examples/textures/brick_diffuse.jpg");
+        const stoneTexture = loader.load("./textures/bluerocks.jpg");
         const material = new THREE.MeshStandardMaterial({
             //color: 0x888888,
             map: stoneTexture,
