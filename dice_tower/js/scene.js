@@ -87,24 +87,25 @@ const loader = new THREE.TextureLoader();
 
 export function createScene() {
     const scene = new THREE.Scene();
-    const floorGeometry = new THREE.PlaneGeometry(40, 20);
+    const floorGeometry = new THREE.PlaneGeometry(60, 50);
 
-    const texture = loader.load("./textures/rocks.jpg");
+    const texture = loader.load("./textures/grass/grass.jpg");
     // 
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
 
-    texture.repeat.set(8, 8);
+    texture.repeat.set(20, 20);
     const floorMaterial = new THREE.MeshStandardMaterial({
-        //color: 0x888888,
         map: texture,
-        roughness: 0.9,
-        //trasparent: true,
-        //metalness: 0.0
+        normalMap: loader.load("./textures/grass/normal.jpg"),
+        roughnessMap: loader.load("./textures/grass/rough.jpg"),
+        aoMap: loader.load("./textures/grass/ao.jpg"),
+        displacementMap: loader.load("./textures/grass/displacement.jpg"),
+        displacementScale: 0.05
     });
 
     const floor = new THREE.Mesh(floorGeometry, floorMaterial);
-
+    floor.receiveShadow = true;
     floor.rotation.x = -Math.PI / 2;
 
     floor.position.y = 0;
@@ -112,9 +113,40 @@ export function createScene() {
     scene.add(floor);
 
   
-    const light = new THREE.DirectionalLight(0xffffff, 1);
-    light.position.set(2, 2, 2);
-    scene.add(light);
+    // =====================
+    // LUCE AMBIENTE
+    // =====================
+    const ambient = new THREE.AmbientLight(
+        0xffffff,
+        0.4
+    );
+    scene.add(ambient);
+
+    // =====================
+    // SOLE
+    // =====================
+    // luce calda (tramonto)
+    const sun = new THREE.DirectionalLight(0xffcc88, 2);
+
+    sun.position.set(20, 30, 10);
+    sun.castShadow = true;
+
+    sun.shadow.mapSize.width = 2048;
+    sun.shadow.mapSize.height = 2048;
+
+    sun.shadow.camera.left = -40;
+    sun.shadow.camera.right = 40;
+    sun.shadow.camera.top = 40;
+    sun.shadow.camera.bottom = -40;
+
+    sun.shadow.camera.near = 1;
+    sun.shadow.camera.far = 100;
+
+    scene.add(sun);
+
+    const helper = new THREE.CameraHelper(sun.shadow.camera);
+    scene.add(helper);
+
 
 
     const geometry = new THREE.BoxGeometry();
@@ -132,6 +164,8 @@ export function createScene() {
 
 
     const cube = new THREE.Mesh(geometry, materials);
+    cube.castShadow = true;
+    cube.receiveShadow = true;
     const edges = new THREE.EdgesGeometry(geometry);
     const lineMaterial = new THREE.LineBasicMaterial({ color: 0x000000 });
     const wireframe = new THREE.LineSegments(edges, lineMaterial);

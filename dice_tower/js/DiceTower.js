@@ -136,19 +136,26 @@ export class TowerModel {
 
         const towerGroup = new THREE.Group();
         scene.add(towerGroup);
-        const stoneTexture = loader.load("./textures/bluerocks.jpg");
+        const stoneTexture = loader.load("./textures/stone/rocks.jpg");
         const material = new THREE.MeshStandardMaterial({
             //color: 0x888888,
-            map: stoneTexture,
-            roughness: 0.8,
+            map: loader.load("./textures/stone/rocks.jpg"),
+            normalMap: loader.load("./textures/stone/normal.jpg"),
+            roughnessMap: loader.load("./textures/stone/rough.jpg"),
+            aoMap: loader.load("./textures/stone/ao.jpg"),
+            //displacementMap: loader.load("./textures/stone/displacement.jpg"),
+            //displacementScale: 0.05
             //metalness: 0.1,
-            transparent: true,
-            opacity: 0.5
+            //transparent: true,
         });
 
-        const rampMaterial = new THREE.MeshBasicMaterial({
-            color: 0xff0000,
-            wireframe: true
+        const rampMaterial = new THREE.MeshStandardMaterial({
+            map: loader.load("./textures/wood/wood.jpg"),
+            normalMap: loader.load("./textures/wood/normal.jpg"),
+            roughnessMap: loader.load("./textures/wood/rough.jpg"),
+            aoMap: loader.load("./textures/wood/ao.jpg"),
+            //displacementMap: loader.load("./textures/wood/displacement.jpg"),
+            //displacementScale: 0.05
         });
 
         // =====================
@@ -166,14 +173,22 @@ export class TowerModel {
 
         const left = new THREE.Mesh(wallXL, material);
         left.position.set(-half, wallY, 0);
+        left.castShadow = true;
+        left.receiveShadow = true;
 
         const right = new THREE.Mesh(wallXR, material);
         right.position.set(half, 2 + wallY, 0);
+        right.castShadow = true;
+        right.receiveShadow = true;
 
         const front = new THREE.Mesh(wallZ, material);
         front.position.set(0, wallY, -half);
+        front.castShadow = true;
+        front.receiveShadow = true;
 
         const back = new THREE.Mesh(wallZ, material);
+        back.castShadow = true;
+        back.receiveShadow = true;
         back.position.set(0, wallY, half);
 
         wallsGroup.add(left, right, front, back);
@@ -182,8 +197,15 @@ export class TowerModel {
         const crenelGroup = new THREE.Group();
         towerGroup.add(crenelGroup);
 
-        const crenelGeo = new THREE.BoxGeometry(0.6, 0.8, 0.1);
-        const crenelMaterial = new THREE.MeshStandardMaterial({ color: 0x777777 });
+        const crenelGeo = new THREE.BoxGeometry(1.0, 0.8, 0.1);
+        const crenelMaterial = new THREE.MeshStandardMaterial({
+            map: loader.load("./textures/rock/rock.jpg"),
+            normalMap: loader.load("./textures/rock/normal.jpg"),
+            roughnessMap: loader.load("./textures/rock/rough.jpg"),
+            aoMap: loader.load("./textures/rock/ao.jpg"),
+            //displacementMap: loader.load("./textures/rock/displacement.jpg"),
+            //displacementScale: 0.05
+        });
 
         const count = 5;
         const step = (size * 2) / count;
@@ -194,10 +216,14 @@ export class TowerModel {
             const x = 0.8 - size +i * step;
 
             const front = new THREE.Mesh(crenelGeo, crenelMaterial);
+            front.castShadow= true;
+            front.receiveShadow= true;
             front.position.set(x, height + 0.5, size);
             crenelGroup.add(front);
 
             const back = new THREE.Mesh(crenelGeo, crenelMaterial);
+            back.castShadow= true;
+            back.receiveShadow= true;
             back.position.set(x, height + 0.5, -size);
             crenelGroup.add(back);
         }
@@ -208,11 +234,15 @@ export class TowerModel {
             const z = 0.8 -size + i * step;
 
             const left = new THREE.Mesh(crenelGeo, crenelMaterial);
+            left.castShadow= true;
+            left.receiveShadow= true;
             left.position.set(-size, height + 0.5, z);
             left.rotation.y = Math.PI / 2;
             crenelGroup.add(left);
 
             const right = new THREE.Mesh(crenelGeo, crenelMaterial);
+            right.castShadow= true;
+            right.receiveShadow= true;
             right.position.set(size, height + 0.5, z);
             right.rotation.y = Math.PI / 2;
             crenelGroup.add(right);
@@ -233,6 +263,8 @@ export class TowerModel {
         );
 
         const ramp1 = new THREE.Mesh(rampGeo, rampMaterial);
+        ramp1.castShadow = true;
+        ramp1.receiveShadow = true;
         ramp1.position.set(
             size - rampHalf + 0.75,
             height - this.stepY,
@@ -241,6 +273,8 @@ export class TowerModel {
         ramp1.rotation.z = 0.7;
 
         const ramp2 = new THREE.Mesh(rampGeo, rampMaterial);
+        ramp2.castShadow = true;
+        ramp2.receiveShadow = true;
         ramp2.position.set(
             -size + rampHalf - 0.75,
             height - this.stepY - 5,
@@ -413,7 +447,7 @@ export class TowerModel {
                         }
 
                         // IMPORTANTISSIMO: forza anche posizione stabile
-                        p.obj.position.y = groundY+0.1;
+                        p.obj.position.y = groundY+0.05 + Math.random() * 0.1;
                     }
                     
                 }
