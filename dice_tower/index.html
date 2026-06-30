@@ -23,13 +23,50 @@
             font-family: Arial, sans-serif;
             z-index: 1000;
         }
-        #dropDice {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            z-index: 10;
-            padding: 10px 15px;
-            cursor: pointer;
+        #menu{
+            position:absolute;
+            top:20px;
+            right:20px;
+
+            background:rgba(20,20,20,0.85);
+
+            padding:15px;
+            border-radius:12px;
+
+            display:flex;
+            flex-direction:column;
+            gap:10px;
+
+            color:white;
+            font-family:Arial;
+
+            z-index:1000;
+        }
+
+        .mainButton{
+            padding:10px;
+            font-size:16px;
+            cursor:pointer;
+        }
+
+        .themeRow{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:15px;
+        }
+
+        .themeBtn{
+            width:20px;
+            height:20px;
+            border-radius:50%;
+            border:2px solid white;
+            background:transparent;
+            cursor:pointer;
+        }
+
+        .themeBtn.active{
+            background:white;
         }
     </style>
 
@@ -57,8 +94,34 @@
     ">
         -
     </div>
-    <script type="module" src="./js/main.js"></script>
-    <button id="dropDice">Fai cadere il dado</button>
+        <script type="module" src="./js/main.js"></script>
+        <div id="menu">
+
+        <button id="dropDice" class="mainButton">
+            Fai cadere il dado
+        </button>
+
+        <div class="themeRow">
+            <span>Medieval</span>
+            <button class="themeBtn active" data-theme="medieval"></button>
+        </div>
+
+        <div class="themeRow">
+            <span>Ice</span>
+            <button class="themeBtn" data-theme="ice"></button>
+        </div>
+
+        <div class="themeRow">
+            <span>Rust</span>
+            <button class="themeBtn" data-theme="madmax"></button>
+        </div>
+
+        <div class="themeRow">
+            <span>Cyber</span>
+            <button class="themeBtn" data-theme="cyber"></button>
+        </div>
+
+    </div>
     
 </body>
 </html>

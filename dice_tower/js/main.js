@@ -103,26 +103,45 @@ function dropDice() {
 }
 
 // -------------------- BUTTON --------------------
-dropBtn.addEventListener("click", () => {
+document
+    .getElementById("dropDice")
+    .addEventListener("click", () => {
 
-    // 1. torre in idle → puoi lanciare dado
-    if (tower.state === "idle") {
-        dropDice();      
-        return;
-    }
+        if (tower.state === "collapsed") {
+            tower.reset(scene, world);
+        }
 
-    // 2. in crollo → niente
-    if (tower.state === "collapsing") {
-        return;
-    }
+        if (tower.state !== "collapsing") {
+            dropDice();
+        }
+    });
 
-    // 3. già collassata → reset
-    if (tower.state === "collapsed") {
-        tower.reset(scene, world);
-        dropDice();
-        return;
-    }
+const themeButtons = document.querySelectorAll(".themeBtn");
+
+function setSelectedThemeUI(theme) {
+
+    themeButtons.forEach(btn => {
+
+        if (btn.dataset.theme === theme)
+            btn.classList.add("active");
+        else
+            btn.classList.remove("active");
+    });
+}
+
+themeButtons.forEach(btn => {
+
+    btn.addEventListener("click", () => {
+
+        const theme = btn.dataset.theme;
+
+        tower.changeTheme(theme);
+        setSelectedThemeUI(theme);
+    });
 });
+//inizialization
+tower.changeTheme("medieval");
+setSelectedThemeUI("medieval");
 
 // spacebar
 window.addEventListener("keydown", (event) => {
@@ -192,3 +211,18 @@ function animate() {
 }
 
 animate();
+
+window.addEventListener("keydown", (e) => {
+
+    if (e.key === "1")
+        tower.changeTheme("medieval");
+
+    if (e.key === "2")
+        tower.changeTheme("ice");
+
+    if (e.key === "3")
+        tower.changeTheme("madmax");
+
+    if (e.key === "4")
+        tower.changeTheme("cyber");
+});

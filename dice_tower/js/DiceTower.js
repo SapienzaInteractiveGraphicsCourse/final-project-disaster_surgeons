@@ -30,6 +30,7 @@ export class TowerModel {
         };
 
         this.state = "idle"; 
+        this.currentTheme = "medieval";
 
     }
 
@@ -136,27 +137,47 @@ export class TowerModel {
 
         const towerGroup = new THREE.Group();
         scene.add(towerGroup);
-        const stoneTexture = loader.load("./textures/stone/rocks.jpg");
-        const material = new THREE.MeshStandardMaterial({
-            //color: 0x888888,
-            map: loader.load("./textures/stone/rocks.jpg"),
-            normalMap: loader.load("./textures/stone/normal.jpg"),
-            roughnessMap: loader.load("./textures/stone/rough.jpg"),
-            aoMap: loader.load("./textures/stone/ao.jpg"),
-            //displacementMap: loader.load("./textures/stone/displacement.jpg"),
-            //displacementScale: 0.05
-            //metalness: 0.1,
-            //transparent: true,
-        });
+        
+        this.materials = {
 
-        const rampMaterial = new THREE.MeshStandardMaterial({
-            map: loader.load("./textures/wood/wood.jpg"),
-            normalMap: loader.load("./textures/wood/normal.jpg"),
-            roughnessMap: loader.load("./textures/wood/rough.jpg"),
-            aoMap: loader.load("./textures/wood/ao.jpg"),
-            //displacementMap: loader.load("./textures/wood/displacement.jpg"),
-            //displacementScale: 0.05
-        });
+            wall: new THREE.MeshStandardMaterial({
+                map: loader.load("./textures/stone/rocks.jpg"),
+                normalMap: loader.load("./textures/stone/normal.jpg"),
+                roughnessMap: loader.load("./textures/stone/rough.jpg"),
+                aoMap: loader.load("./textures/stone/ao.jpg")
+                //displacementMap: loader.load("./textures/stone/displacement.jpg"),
+                //displacementScale: 0.05
+                //metalness: 0.1,
+                //transparent: true,
+            }),
+
+            ramp: new THREE.MeshStandardMaterial({
+                map: loader.load("./textures/wood/wood.jpg"),
+                normalMap: loader.load("./textures/wood/normal.jpg"),
+                roughnessMap: loader.load("./textures/wood/rough.jpg"),
+                aoMap: loader.load("./textures/wood/ao.jpg")
+                //displacementMap: loader.load("./textures/stone/displacement.jpg"),
+                //displacementScale: 0.05
+                //metalness: 0.1,
+                //transparent: true,
+            }),
+
+            crenel: new THREE.MeshStandardMaterial({
+                map: loader.load("./textures/rock/rock.jpg"),
+                normalMap: loader.load("./textures/rock/normal.jpg"),
+                roughnessMap: loader.load("./textures/rock/rough.jpg"),
+                aoMap: loader.load("./textures/rock/ao.jpg")
+                //displacementMap: loader.load("./textures/stone/displacement.jpg"),
+                //displacementScale: 0.05
+                //metalness: 0.1,
+                //transparent: true,
+            })
+        };
+
+
+        const material = this.materials.wall;
+
+        const rampMaterial = this.materials.ramp;
 
         // =====================
         // WALLS
@@ -198,14 +219,7 @@ export class TowerModel {
         towerGroup.add(crenelGroup);
 
         const crenelGeo = new THREE.BoxGeometry(1.0, 0.8, 0.1);
-        const crenelMaterial = new THREE.MeshStandardMaterial({
-            map: loader.load("./textures/rock/rock.jpg"),
-            normalMap: loader.load("./textures/rock/normal.jpg"),
-            roughnessMap: loader.load("./textures/rock/rough.jpg"),
-            aoMap: loader.load("./textures/rock/ao.jpg"),
-            //displacementMap: loader.load("./textures/rock/displacement.jpg"),
-            //displacementScale: 0.05
-        });
+        const crenelMaterial = this.materials.crenel;
 
         const count = 5;
         const step = (size * 2) / count;
@@ -464,6 +478,7 @@ export class TowerModel {
 
         // rimuovi visuale
         scene.remove(towerGroup);
+        world.removeBody(this.nodes.base);
 
         // reset stato
         this.state = "idle";
@@ -472,5 +487,118 @@ export class TowerModel {
         // ricostruisci
         this.buildCannon(world);
         this.buildThree(scene);
+
+        this.changeTheme(this.currentTheme);
+    }
+
+    changeTheme(theme) {
+
+        this.currentTheme = theme;
+
+        if (theme === "medieval") {
+
+
+            this.materials.wall.map =loader.load("./textures/stone/rocks.jpg");
+            this.materials.wall.normalMap =loader.load("./textures/stone/normal.jpg");
+            this.materials.wall.roughnessMap =loader.load("./textures/stone/rough.jpg");
+            this.materials.wall.aoMap =loader.load("./textures/stone/ao.jpg");
+            this.materials.wall.metalnessMap = null;
+            this.materials.wall.metalness = 0;
+
+            this.materials.ramp.map =loader.load("./textures/wood/wood.jpg");
+            this.materials.ramp.normalMap =loader.load("./textures/wood/normal.jpg");
+            this.materials.ramp.roughnessMap =loader.load("./textures/wood/rough.jpg");
+            this.materials.ramp.aoMap =loader.load("./textures/wood/ao.jpg");
+            this.materials.ramp.metalnessMap = null;
+            this.materials.ramp.metalness = 0;
+
+            this.materials.crenel.map =loader.load("./textures/rock/rock.jpg");
+            this.materials.crenel.normalMap =loader.load("./textures/rock/normal.jpg");
+            this.materials.crenel.roughnessMap =loader.load("./textures/rock/rough.jpg");
+            this.materials.crenel.aoMap =loader.load("./textures/rock/ao.jpg");
+            this.materials.crenel.metalnessMap = null;
+            this.materials.crenel.metalness = 0;
+
+        }
+
+
+        else if (theme === "ice") {
+
+            this.materials.wall.map =loader.load("./textures/ice/ice.jpg");
+            this.materials.wall.normalMap =loader.load("./textures/ice/normal.jpg");
+            this.materials.wall.roughnessMap =loader.load("./textures/ice/rough.jpg");
+            //this.materials.wall.metalnessMap =loader.load("./textures/ice/metal.jpg");
+            this.materials.wall.aoMap = null;
+           // this.materials.wall.metalness = 0.8;
+
+            this.materials.ramp.map =loader.load("./textures/ice/ice.jpg");
+            this.materials.ramp.normalMap =loader.load("./textures/ice/normal.jpg");
+            this.materials.ramp.roughnessMap =loader.load("./textures/ice/rough.jpg");
+            //this.materials.ramp.metalnessMap =loader.load("./textures/ice/metal.jpg");
+            this.materials.ramp.aoMap = null;
+            //this.materials.ramp.metalness = loader.load("./textures/gold/metal.jpg");
+
+            this.materials.crenel.map =loader.load("./textures/ice/ice.jpg");
+            this.materials.crenel.normalMap =loader.load("./textures/ice/normal.jpg");
+            this.materials.crenel.roughnessMap =loader.load("./textures/ice/rough.jpg");
+            //this.materials.crenel.metalnessMap =loader.load("./textures/ice/metal.jpg");
+            this.materials.crenel.aoMap = null;
+            //this.materials.crenel.metalness = loader.load("./textures/gold/metal.jpg");
+        }
+
+        else if (theme === "madmax") {
+
+
+            this.materials.wall.map =loader.load("./textures/madmax/madmax.jpg");
+            this.materials.wall.normalMap =loader.load("./textures/madmax/normal.jpg");
+            this.materials.wall.roughnessMap =loader.load("./textures/madmax/rough.jpg");
+            //this.materials.wall.metalnessMap =loader.load("./textures/ice/metal.jpg");
+            this.materials.wall.aoMap = loader.load("./textures/madmax/ao.jpg");
+           // this.materials.wall.metalness = 0.8;
+
+            this.materials.ramp.map =loader.load("./textures/madmax/madmax.jpg");
+            this.materials.ramp.normalMap =loader.load("./textures/madmax/normal.jpg");
+            this.materials.ramp.roughnessMap =loader.load("./textures/madmax/rough.jpg");
+            //this.materials.ramp.metalnessMap =loader.load("./textures/ice/metal.jpg");
+            this.materials.ramp.aoMap = loader.load("./textures/madmax/ao.jpg");
+            //this.materials.ramp.metalness = loader.load("./textures/gold/metal.jpg");
+
+            this.materials.crenel.map =loader.load("./textures/madmax/madmax.jpg");
+            this.materials.crenel.normalMap =loader.load("./textures/madmax/normal.jpg");
+            this.materials.crenel.roughnessMap =loader.load("./textures/madmax/rough.jpg");
+            //this.materials.crenel.metalnessMap =loader.load("./textures/ice/metal.jpg");
+            this.materials.crenel.aoMap = loader.load("./textures/madmax/ao.jpg");
+            //this.materials.crenel.metalness = loader.load("./textures/gold/metal.jpg");
+        }
+
+        else if (theme === "cyber") {
+
+            this.materials.wall.map =loader.load("./textures/cyber/cyber.jpg");
+            this.materials.wall.normalMap =loader.load("./textures/cyber/normal.jpg");
+            this.materials.wall.roughnessMap =loader.load("./textures/cyber/rough.jpg");
+            //this.materials.wall.metalnessMap =loader.load("./textures/ice/metal.jpg");
+            this.materials.wall.aoMap = loader.load("./textures/cyber/ao.jpg");
+           // this.materials.wall.metalness = 0.8;
+
+            this.materials.ramp.map =loader.load("./textures/cyber/cyber.jpg");
+            this.materials.ramp.normalMap =loader.load("./textures/cyber/normal.jpg");
+            this.materials.ramp.roughnessMap =loader.load("./textures/cyber/rough.jpg");
+            //this.materials.ramp.metalnessMap =loader.load("./textures/ice/metal.jpg");
+            this.materials.ramp.aoMap = loader.load("./textures/cyber/ao.jpg");
+            //this.materials.ramp.emissiveMap = loader.load("./textures/cyber/emissive.jpg");
+            //this.materials.ramp.metalness = loader.load("./textures/gold/metal.jpg");
+
+            this.materials.crenel.map =loader.load("./textures/cyber/cyber.jpg");
+            this.materials.crenel.normalMap =loader.load("./textures/cyber/normal.jpg");
+            this.materials.crenel.roughnessMap =loader.load("./textures/cyber/rough.jpg");
+            //this.materials.crenel.metalnessMap =loader.load("./textures/ice/metal.jpg");
+            this.materials.crenel.aoMap = loader.load("./textures/cyber/ao.jpg");
+            //this.materials.crenel.emissiveMap = loader.load("./textures/cyber/emissive.jpg");
+            //this.materials.crenel.metalness = loader.load("./textures/gold/metal.jpg");
+        }
+
+        this.materials.wall.needsUpdate = true;
+        this.materials.ramp.needsUpdate = true;
+        this.materials.crenel.needsUpdate = true;
     }
 }

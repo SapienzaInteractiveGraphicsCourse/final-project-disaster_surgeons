@@ -122,6 +122,8 @@ export function createScene() {
     );
     scene.add(ambient);
 
+    
+
     // =====================
     // SOLE
     // =====================
