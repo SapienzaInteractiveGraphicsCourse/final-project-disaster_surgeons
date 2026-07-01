@@ -29,13 +29,13 @@ world.addBody(groundBody);
 
 // -------------------- DADO --------------------
 const cubeBody = new CANNON.Body({
-    mass: 1,
+    mass: 0.1,
     shape: new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5))
 });
 
 cubeBody.position.set(3, 15, 0);
-cubeBody.angularDamping = 0.4;
-cubeBody.linearDamping = 0.2;
+cubeBody.angularDamping = 0.05;
+cubeBody.linearDamping = 0.01;
 
 world.addBody(cubeBody);
 
@@ -88,20 +88,17 @@ function dropDice() {
     cubeBody.velocity.set(0, 0, 0);
     cubeBody.angularVelocity.set(0, 0, 0);
 
-    cubeBody.position.set(3, 15, 0);
+    cubeBody.position.set(2, 18, 0);   // più alto
     cubeBody.quaternion.set(0, 0, 0, 1);
 
     cubeBody.wakeUp();
 
-    const randX = (Math.random() - 0.5) * 1.5;
-    const randZ = (Math.random() - 0.5) * 1.5;
-
-    cubeBody.applyImpulse(
-        new CANNON.Vec3(randX, 0, randZ),
-        cubeBody.position
+    cubeBody.angularVelocity.set(
+        (Math.random()-0.5)*15,
+        (Math.random()-0.5)*15,
+        (Math.random()-0.5)*15
     );
 }
-
 // -------------------- BUTTON --------------------
 document
     .getElementById("dropDice")

@@ -12,10 +12,11 @@ export class TowerModel {
         // =====================
         this.size = 4;
         this.height = 12;
-        this.thickness = 0.2;
+        this.visualThickness = 0.5;
+        this.physicalThickness = 0.5;
 
         this.rampLength = this.size * 1.5;
-        this.rampThickness = 0.1;
+        this.rampThickness = 0.25;
 
         this.levels = 4;
         this.stepY = this.height / this.levels;
@@ -41,12 +42,12 @@ export class TowerModel {
 
         const size = this.size;
         const height = this.height;
-        const thickness = this.thickness;
+        const physicalThickness = this.physicalThickness;
 
         const half = size;
 
-        const baseY = thickness / 2;
-        const wallY = height / 2 + thickness / 2;
+        const baseY = physicalThickness / 2;
+        const wallY = height / 2 + physicalThickness / 2;
 
         const addBody = (body, group) => {
             world.addBody(body);
@@ -55,7 +56,7 @@ export class TowerModel {
 
         const box = (x, y, z, w, h, d) => {
             const body = new CANNON.Body({
-                mass: 1, 
+                mass: 0, 
                 type: CANNON.Body.STATIC, 
                 shape: new CANNON.Box(new CANNON.Vec3(w / 2, h / 2, d / 2))
             });
@@ -79,17 +80,17 @@ export class TowerModel {
         // =====================
         this.nodes.base = box(
             0, baseY, 0,
-            size, thickness, size
+            size, physicalThickness, size
         );
         world.addBody(this.nodes.base);
 
         // =====================
         // WALLS
         // =====================
-        const left = box(-half, wallY, 0, thickness, height, size*2);
-        const right = box(half, wallY+2, 0, thickness, height-4, size*2);
-        const front = box(0, wallY, -half, size*2, height, thickness);
-        const back = box(0, wallY, half, size*2, height, thickness);
+        const left = box(-half, wallY, 0, physicalThickness, height, size*2);
+        const right = box(half, wallY+2, 0, physicalThickness, height-4, size*2);
+        const front = box(0, wallY, -half, size*2, height, physicalThickness);
+        const back = box(0, wallY, half, size*2, height, physicalThickness);
 
         this.nodes.walls.push(left, right, front, back);
 
@@ -133,7 +134,7 @@ export class TowerModel {
 
         const size = this.size;
         const height = this.height;
-        const thickness = this.thickness;
+        const visualThickness = this.visualThickness;
 
         const towerGroup = new THREE.Group();
         scene.add(towerGroup);
@@ -182,11 +183,11 @@ export class TowerModel {
         // =====================
         // WALLS
         // =====================
-        const wallXL = new THREE.BoxGeometry(thickness, height, size * 2);
-        const wallXR = new THREE.BoxGeometry(thickness, height-4, size * 2);
-        const wallZ = new THREE.BoxGeometry(size * 2, height, thickness);
+        const wallXL = new THREE.BoxGeometry(visualThickness, height, size * 2);
+        const wallXR = new THREE.BoxGeometry(visualThickness, height-4, size * 2 + 0.49);
+        const wallZ = new THREE.BoxGeometry(size * 2, height, visualThickness);
 
-        const wallY = height / 2 + thickness / 2;
+        const wallY = height / 2;
         const half = size;
 
         const wallsGroup = new THREE.Group();
@@ -218,7 +219,7 @@ export class TowerModel {
         const crenelGroup = new THREE.Group();
         towerGroup.add(crenelGroup);
 
-        const crenelGeo = new THREE.BoxGeometry(1.0, 0.8, 0.1);
+        const crenelGeo = new THREE.BoxGeometry(1.0, 0.8, 0.25);
         const crenelMaterial = this.materials.crenel;
 
         const count = 5;
@@ -232,13 +233,13 @@ export class TowerModel {
             const front = new THREE.Mesh(crenelGeo, crenelMaterial);
             front.castShadow= true;
             front.receiveShadow= true;
-            front.position.set(x, height + 0.5, size);
+            front.position.set(x, height + 0.35, size);
             crenelGroup.add(front);
 
             const back = new THREE.Mesh(crenelGeo, crenelMaterial);
             back.castShadow= true;
             back.receiveShadow= true;
-            back.position.set(x, height + 0.5, -size);
+            back.position.set(x, height + 0.35, -size);
             crenelGroup.add(back);
         }
 
@@ -250,14 +251,14 @@ export class TowerModel {
             const left = new THREE.Mesh(crenelGeo, crenelMaterial);
             left.castShadow= true;
             left.receiveShadow= true;
-            left.position.set(-size, height + 0.5, z);
+            left.position.set(-size, height + 0.35, z);
             left.rotation.y = Math.PI / 2;
             crenelGroup.add(left);
 
             const right = new THREE.Mesh(crenelGeo, crenelMaterial);
             right.castShadow= true;
             right.receiveShadow= true;
-            right.position.set(size, height + 0.5, z);
+            right.position.set(size, height + 0.35, z);
             right.rotation.y = Math.PI / 2;
             crenelGroup.add(right);
         }
@@ -472,6 +473,7 @@ export class TowerModel {
         this.state = "collapsed";
         animate();
     }
+
     reset(scene, world) {
 
         const { towerGroup } = this.visual;
