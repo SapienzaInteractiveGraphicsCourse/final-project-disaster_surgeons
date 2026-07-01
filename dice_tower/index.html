@@ -68,6 +68,12 @@
         .themeBtn.active{
             background:white;
         }
+
+        .diceBtn {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+        }
     </style>
 
     <script type="importmap">
@@ -97,30 +103,33 @@
         <script type="module" src="./js/main.js"></script>
         <div id="menu">
 
-        <button id="dropDice" class="mainButton">
-            Fai cadere il dado
-        </button>
+            <button id="dropD6" class="mainButton">
+                Fai cadere il d6
+            </button>
+            <button id="dropD20" class="mainButton">
+                Fai cadere il d20
+            </button>
 
-        <div class="themeRow">
-            <span>Medieval</span>
-            <button class="themeBtn active" data-theme="medieval"></button>
-        </div>
+            <!-- TEMI -->
+            <div class="themeRow">
+                <span>Medieval</span>
+                <button class="themeBtn active" data-theme="medieval"></button>
+            </div>
 
-        <div class="themeRow">
-            <span>Ice</span>
-            <button class="themeBtn" data-theme="ice"></button>
-        </div>
+            <div class="themeRow">
+                <span>Ice</span>
+                <button class="themeBtn" data-theme="ice"></button>
+            </div>
 
-        <div class="themeRow">
-            <span>Rust</span>
-            <button class="themeBtn" data-theme="madmax"></button>
-        </div>
+            <div class="themeRow">
+                <span>Rust</span>
+                <button class="themeBtn" data-theme="madmax"></button>
+            </div>
 
-        <div class="themeRow">
-            <span>Cyber</span>
-            <button class="themeBtn" data-theme="cyber"></button>
-        </div>
-
+            <div class="themeRow">
+                <span>Cyber</span>
+                <button class="themeBtn" data-theme="cyber"></button>
+            </div>
     </div>
     
 </body>

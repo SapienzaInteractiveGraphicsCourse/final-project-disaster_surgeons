@@ -149,34 +149,5 @@ export function createScene() {
     const helper = new THREE.CameraHelper(sun.shadow.camera);
     scene.add(helper);
 
-
-
-    const geometry = new THREE.BoxGeometry();
-    console.log(geometry.groups);
-
-    
-    const materials = [
-        new THREE.MeshStandardMaterial({ map: createDiceFaceTexture(2) }), // +X
-        new THREE.MeshStandardMaterial({ map: createDiceFaceTexture(5) }), // -X
-        new THREE.MeshStandardMaterial({ map: createDiceFaceTexture(1) }), // +Y
-        new THREE.MeshStandardMaterial({ map: createDiceFaceTexture(6) }), // -Y
-        new THREE.MeshStandardMaterial({ map: createDiceFaceTexture(3) }), // +Z
-        new THREE.MeshStandardMaterial({ map: createDiceFaceTexture(4) })  // -Z
-    ];
-
-
-    const cube = new THREE.Mesh(geometry, materials);
-    cube.castShadow = true;
-    cube.receiveShadow = true;
-    const edges = new THREE.EdgesGeometry(geometry);
-    const lineMaterial = new THREE.LineBasicMaterial({ color: 0x000000 });
-    const wireframe = new THREE.LineSegments(edges, lineMaterial);
-
-    cube.add(wireframe);
-    scene.add(cube);
-
-    return {
-        scene,
-        cube
-    };
+    return { scene } 
 }
