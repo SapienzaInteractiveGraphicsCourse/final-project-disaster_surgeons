@@ -68,6 +68,8 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 // -------------------- CONTROLS --------------------
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
+controls.minPolarAngle = 0.2;
+controls.maxPolarAngle = Math.PI / 2 - 0.01;
 controls.target.set(0, 0, 0);
 controls.update();
 
@@ -112,9 +114,30 @@ document
     .getElementById("dropD6")
     .addEventListener("click", () => {
 
+        resultUI.innerText = "Rullo di tamburi...";
+
         if (currentDiceType !== "d6") {
             switchDice("d6");
         }
+        if (tower.state === "collapsed") {
+            tower.reset(scene, world);
+        }
+
+        if (tower.state !== "collapsing") {
+            dropDice();
+        }
+    });
+/*
+document
+    .getElementById("dropD12")
+    .addEventListener("click", () => {
+
+        resultUI.innerText = "Rullo di tamburi...";
+
+        if (currentDiceType !== "d12") {
+            switchDice("d12");
+        }
+
         if (tower.state === "collapsed") {
             tower.reset(scene, world);
         }
@@ -128,6 +151,8 @@ document
     .getElementById("dropD20")
     .addEventListener("click", () => {
 
+        resultUI.innerText = "Rullo di tamburi...";
+
         if (currentDiceType !== "d20") {
             switchDice("d20");
         }
@@ -140,7 +165,7 @@ document
             dropDice();
         }
     });
-
+*/
 const themeButtons = document.querySelectorAll(".themeBtn");
 
 function setSelectedThemeUI(theme) {
@@ -213,15 +238,41 @@ animate();
 
 window.addEventListener("keydown", (e) => {
 
-    if (e.key === "1")
-        tower.changeTheme("medieval");
+    if (e.key === "8") {
+        if(tower.state === "collapsed") {
+            tower.reset(scene, world);
+        }
+        switchDice("d8");
+        dropDice();
+    }
+    if (e.key === "6") {
+        if(tower.state === "collapsed") {
+            tower.reset(scene, world);
+        }
+        switchDice("d6");
+        dropDice();
+    }
+    if (e.key === "2") {
+        if(tower.state === "collapsed") {
+            tower.reset(scene, world);
+        }
+        switchDice("d20");
+        dropDice();
+    }
+    if (e.key === "1") {
+        if(tower.state === "collapsed") {
+            tower.reset(scene, world);
+        }
+        switchDice("d12");
+        dropDice();
+    }
+    if (e.key === "5") {
+        if(tower.state === "collapsed") {
+            tower.reset(scene, world);
+        }
+        switchDice("d12");
+        dropDice();
+        
+    }
 
-    if (e.key === "2")
-        tower.changeTheme("ice");
-
-    if (e.key === "3")
-        tower.changeTheme("madmax");
-
-    if (e.key === "4")
-        tower.changeTheme("cyber");
 });

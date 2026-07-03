@@ -5,11 +5,7 @@ export class D6 {
 
     constructor(scene, world) {
 
-        console.log("Creating D6");
 
-        // -------------------------
-        // PHYSICS
-        // -------------------------
         this.body = new CANNON.Body({
             mass: 0.1,
             shape: new CANNON.Box(new CANNON.Vec3(0.5, 0.5, 0.5)),
@@ -18,9 +14,7 @@ export class D6 {
         this.body.position.set(0, 10, 0);
         world.addBody(this.body);
 
-        // -------------------------
-        // VISUAL
-        // -------------------------
+
         const geometry = new THREE.BoxGeometry(1, 1, 1);
 
         const materials = [
@@ -50,9 +44,7 @@ export class D6 {
         ];
     }
 
-    // =========================================================
-    // TEXTURE SYSTEM (pip + bordo)
-    // =========================================================
+
     createFaceTexture(number) {
 
         const canvas = document.createElement("canvas");

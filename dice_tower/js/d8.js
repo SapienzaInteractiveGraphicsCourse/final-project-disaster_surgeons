@@ -1,12 +1,12 @@
 import * as THREE from "three";
 import * as CANNON from "cannon-es";
 
-export class D20 {
+export class D8 {
 
     constructor(scene, world) {
 
       
-        const geometry = new THREE.IcosahedronGeometry(1);
+        const geometry = new THREE.OctahedronGeometry(1);
 
         const material = new THREE.MeshStandardMaterial({
             color: 0xffffff,
@@ -93,9 +93,11 @@ export class D20 {
 
         this.computeFaceNormals();
 
+        this.faceValues = [1,2,3,4,5,6,7,8];
+
         this.faceSprites = [];
 
-        for (let i = 1; i <= 20; i++) {
+        for (let i = 1; i <= 8; i++) {
             const sprite = this.createFace(i);
 
             this.visual.add(sprite);
@@ -144,16 +146,29 @@ export class D20 {
         return sprite;
     }
 
-
-
     computeFaceNormals() {
-        const normals = [];
 
-        for (let f of this.body.shapes[0].faces) {
+        const shape = this.body.shapes[0];
 
-            const a = this.body.shapes[0].vertices[f[0]];
-            const b = this.body.shapes[0].vertices[f[1]];
-            const c = this.body.shapes[0].vertices[f[2]];
+        this.faceNormals = [];
+
+        const faceMap = [
+            [0, 4, 1],
+            [1, 4, 2],
+            [2, 4, 3],
+            [3, 4, 0],
+
+            [0, 1, 5],
+            [1, 2, 5],
+            [2, 3, 5],
+            [3, 0, 5]
+        ];
+
+        for (let f of faceMap) {
+
+            const a = shape.vertices[f[0]];
+            const b = shape.vertices[f[1]];
+            const c = shape.vertices[f[2]];
 
             const ab = new CANNON.Vec3();
             const ac = new CANNON.Vec3();
@@ -165,10 +180,10 @@ export class D20 {
             ab.cross(ac, normal);
             normal.normalize();
 
-            normals.push(normal);
+            this.faceNormals.push(normal);
         }
 
-        this.faceNormals = normals;
+        this.faceCount = 8;
     }
 
     getTopFace() {
@@ -176,13 +191,13 @@ export class D20 {
         const upWorld = new CANNON.Vec3(0, 1, 0);
 
         let maxDot = -Infinity;
-        let faceIndex = -1;
+        let faceIndex = 0;
 
-        for (let i = 0; i < this.body.shapes[0].faces.length; i++) {
+        const count = Math.min(this.faceNormals.length, this.faceCount);
 
-            const localNormal = this.faceNormals[i];
-            const worldNormal = this.body.quaternion.vmult(localNormal);
+        for (let i = 0; i < count; i++) {
 
+            const worldNormal = this.body.quaternion.vmult(this.faceNormals[i]);
             const dot = worldNormal.dot(upWorld);
 
             if (dot > maxDot) {
@@ -195,7 +210,6 @@ export class D20 {
     }
 
     getValue() {
-        const face = this.getTopFace();
-        return face + 1;
+        return this.faceValues[this.getTopFace()];
     }
 }

@@ -156,7 +156,7 @@ export class TowerModel {
                 map: loader.load("./textures/wood/wood.jpg"),
                 normalMap: loader.load("./textures/wood/normal.jpg"),
                 roughnessMap: loader.load("./textures/wood/rough.jpg"),
-                aoMap: loader.load("./textures/wood/ao.jpg")
+                //aoMap: loader.load("./textures/wood/ao.jpg")
                 //displacementMap: loader.load("./textures/stone/displacement.jpg"),
                 //displacementScale: 0.05
                 //metalness: 0.1,
@@ -510,7 +510,7 @@ export class TowerModel {
             this.materials.ramp.map =loader.load("./textures/wood/wood.jpg");
             this.materials.ramp.normalMap =loader.load("./textures/wood/normal.jpg");
             this.materials.ramp.roughnessMap =loader.load("./textures/wood/rough.jpg");
-            this.materials.ramp.aoMap =loader.load("./textures/wood/ao.jpg");
+            //this.materials.ramp.aoMap =loader.load("./textures/wood/ao.jpg");
             this.materials.ramp.metalnessMap = null;
             this.materials.ramp.metalness = 0;
 
