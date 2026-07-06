@@ -23,6 +23,30 @@
             font-family: Arial, sans-serif;
             z-index: 1000;
         }
+        #diceHistory {
+
+            position: absolute;
+
+            top: 70px;
+            left: 20px;
+
+            width: 180px;
+            height: 200px;
+
+            background: rgba(20,20,20,0.85);
+
+            color: white;
+            font-family: Arial;
+            font-size: 16px;
+
+            padding: 10px;
+
+            border-radius: 10px;
+
+            overflow-y: auto;
+
+            z-index: 1000;
+        }
         #menu{
             position:absolute;
             top:20px;
@@ -106,16 +130,21 @@
 
 <body>
     
-    <div id="diceResult" style="
-        position: absolute;
-        top: 20px;
-        left: 20px;
-        font-size: 30px;
-        color: white;
-        font-family: Arial;
-        z-index: 1000;
-    ">
+        <div id="diceResult"
+        style="
+            position:absolute;
+            top:20px;
+            left:20px;
+            font-size:30px;
+            color:white;
+            font-family:Arial;
+            z-index:1000;
+        ">
         -
+    </div>
+
+    <div id="diceHistory">
+
     </div>
         <script type="module" src="./js/main.js"></script>
         <div id="menu">

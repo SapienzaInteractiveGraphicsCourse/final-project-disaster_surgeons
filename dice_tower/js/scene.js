@@ -57,8 +57,8 @@ export function createScene() {
 
     scene.add(sun);
 
-    const helper = new THREE.CameraHelper(sun.shadow.camera);
-    scene.add(helper);
+    //const helper = new THREE.CameraHelper(sun.shadow.camera);
+    //scene.add(helper);
 
     return { scene } 
 }

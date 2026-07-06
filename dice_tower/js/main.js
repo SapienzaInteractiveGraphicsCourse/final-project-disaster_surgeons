@@ -20,6 +20,7 @@ const towerMesh = tower.buildThree(scene);
 
 
 const resultUI = document.getElementById("diceResult");
+const historyUI = document.getElementById("diceHistory");
 const dropBtn = document.getElementById("dropD6");
 const dropD20Btn = document.getElementById("dropD20");
 const zargosButton = document.getElementById("zargosMode");
@@ -77,6 +78,8 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.minPolarAngle = 0.2;
 controls.maxPolarAngle = Math.PI / 2 - 0.01;
+controls.minDistance = 15;   
+controls.maxDistance = 30; 
 controls.target.set(0, 0, 0);
 controls.update();
 
@@ -116,6 +119,16 @@ function dropDice() {
         (Math.random()-0.5)*15
     );
 }
+
+function addToHistory(diceType, result) {
+
+    const row = document.createElement("div");
+
+    row.textContent = `${diceType} : ${result}`;
+
+    historyUI.prepend(row);
+}
+
 // -------------------- BUTTON --------------------
 document
     .getElementById("dropD6")
@@ -252,11 +265,17 @@ function animate() {
 
         const value= dice.getValue();
 
+        addToHistory(
+            currentDiceType.toUpperCase(),
+            value
+        );
+
         resultUI.innerText = "Risultato: " + value;
         if (value == 1) {
             tower.collapse();
             //tower.collapseVisual(scene);
         }
+        
     }
 }
 
