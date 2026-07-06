@@ -74,6 +74,23 @@
             height: 28px;
             border-radius: 6px;
         }
+        #zargosMenu{
+            margin-top:8px;
+            padding:8px;
+
+            background:rgba(0,0,0,0.3);
+            border-radius:8px;
+
+            display:flex;
+            flex-direction:column;
+            gap:6px;
+
+            width:150px;
+        }
+
+        #zargosMenu button{
+            width:100%;
+        }
     </style>
 
     <script type="importmap">
@@ -106,6 +123,17 @@
             <button id="dropD6" class="mainButton">
                 Fai cadere il d6
             </button>
+            <div id="zargosMenu" style="display:none; flex-direction:column;">
+                <button id="dropD8" class="mainButton">
+                    Fai cadere il d8
+                </button>
+                <button id="dropD12" class="mainButton">
+                    Fai cadere il d12
+                </button>
+                <button id="dropD20" class="mainButton">
+                    Fai cadere il d20
+                </button>
+            </div>
             <!-- <button id="dropD12" class="mainButton">
                 Fai cadere il d12
             </button>
@@ -133,6 +161,7 @@
                 <span>Cyber</span>
                 <button class="themeBtn" data-theme="cyber"></button>
             </div>
+            <button id="zargosMode">Zargos Mode</button>
     </div>
     
 </body>

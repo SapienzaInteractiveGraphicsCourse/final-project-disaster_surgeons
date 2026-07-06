@@ -6,7 +6,7 @@ const loader = new THREE.TextureLoader();
 
 export function createScene() {
     const scene = new THREE.Scene();
-    const floorGeometry = new THREE.PlaneGeometry(60, 50);
+    const floorGeometry = new THREE.CircleGeometry(60, 50);
 
     const texture = loader.load("./textures/grass/grass.jpg");
     // 

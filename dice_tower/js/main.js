@@ -22,6 +22,13 @@ const towerMesh = tower.buildThree(scene);
 const resultUI = document.getElementById("diceResult");
 const dropBtn = document.getElementById("dropD6");
 const dropD20Btn = document.getElementById("dropD20");
+const zargosButton = document.getElementById("zargosMode");
+const zargosMenu = document.getElementById("zargosMenu");
+const rollD8Button = document.getElementById("rollD8");
+const rollD12Button = document.getElementById("rollD12");
+const rollD20Button = document.getElementById("rollD20");
+
+let zargosActive = false;
 
 
 const groundBody = new CANNON.Body({ mass: 0 });
@@ -53,9 +60,9 @@ const camera = new THREE.PerspectiveCamera(
     1000
 );
 
-camera.position.z = 15;
-camera.position.y = 10;
-camera.position.x = 10;
+camera.position.z = 10;
+camera.position.y = 16;
+camera.position.x = 16;
 
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -127,7 +134,26 @@ document
             dropDice();
         }
     });
-/*
+
+document
+    .getElementById("dropD8")
+    .addEventListener("click", () => {
+
+        resultUI.innerText = "Rullo di tamburi...";
+
+        if (currentDiceType !== "d8") {
+            switchDice("d8");
+        }
+
+        if (tower.state === "collapsed") {
+            tower.reset(scene, world);
+        }
+
+        if (tower.state !== "collapsing") {
+            dropDice();
+        }
+    });
+
 document
     .getElementById("dropD12")
     .addEventListener("click", () => {
@@ -165,7 +191,7 @@ document
             dropDice();
         }
     });
-*/
+
 const themeButtons = document.querySelectorAll(".themeBtn");
 
 function setSelectedThemeUI(theme) {
@@ -206,11 +232,11 @@ window.addEventListener("keydown", (event) => {
 
 
 function isDiceStopped(dice) {
-    return dice.body.velocity.length() < 0.02 &&
-           dice.body.angularVelocity.length() < 0.02;
+    return dice.body.velocity.length() < 0.01 &&
+           dice.body.angularVelocity.length() < 0.01;
 }
 
-// -------------------- ANIMATION LOOP --------------------
+
 function animate() {
     requestAnimationFrame(animate);
 
@@ -236,43 +262,17 @@ function animate() {
 
 animate();
 
+zargosButton.addEventListener("click", () => {
+
+    zargosActive = !zargosActive;
+
+    zargosMenu.style.display =
+        zargosActive ? "flex" : "none";
+});
+
 window.addEventListener("keydown", (e) => {
 
-    if (e.key === "8") {
-        if(tower.state === "collapsed") {
-            tower.reset(scene, world);
-        }
-        switchDice("d8");
-        dropDice();
+    if (e.key === "1"){
+        tower.collapse();
     }
-    if (e.key === "6") {
-        if(tower.state === "collapsed") {
-            tower.reset(scene, world);
-        }
-        switchDice("d6");
-        dropDice();
-    }
-    if (e.key === "2") {
-        if(tower.state === "collapsed") {
-            tower.reset(scene, world);
-        }
-        switchDice("d20");
-        dropDice();
-    }
-    if (e.key === "1") {
-        if(tower.state === "collapsed") {
-            tower.reset(scene, world);
-        }
-        switchDice("d12");
-        dropDice();
-    }
-    if (e.key === "5") {
-        if(tower.state === "collapsed") {
-            tower.reset(scene, world);
-        }
-        switchDice("d12");
-        dropDice();
-        
-    }
-
 });
