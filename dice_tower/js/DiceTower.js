@@ -7,9 +7,6 @@ export class TowerModel {
 
     constructor() {
 
-        // =====================
-        // CONFIG (SOURCE OF TRUTH)
-        // =====================
         this.size = 4;
         this.height = 12;
         this.visualThickness = 0.5;
@@ -21,9 +18,6 @@ export class TowerModel {
         this.levels = 4;
         this.stepY = this.height / this.levels;
 
-        // =====================
-        // HIERARCHY (LOGICAL MODEL)
-        // =====================
         this.nodes = {
             base: null,
             walls: [],
@@ -35,9 +29,7 @@ export class TowerModel {
 
     }
 
-    // ======================================================
-    // 🔵 CANNON BUILD
-    // ======================================================
+
     buildCannon(world) {
 
         const size = this.size;
@@ -75,18 +67,14 @@ export class TowerModel {
             return body;
         };
 
-        // =====================
-        // BASE
-        // =====================
+       
         this.nodes.base = box(
             0, baseY, 0,
             size, physicalThickness, size
         );
         world.addBody(this.nodes.base);
 
-        // =====================
-        // WALLS
-        // =====================
+      
         const left = box(-half, wallY, 0, physicalThickness, height, size*2);
         const right = box(half, wallY+2, 0, physicalThickness, height-4, size*2);
         const front = box(0, wallY, -half, size*2, height, physicalThickness);
@@ -96,9 +84,7 @@ export class TowerModel {
 
         [left, right, front, back].forEach(b => world.addBody(b));
 
-        // =====================
-        // RAMPS
-        // =====================
+       
         const rampHalf = this.rampLength / 2;
 
         const ramp1 = ramp(
@@ -127,9 +113,6 @@ export class TowerModel {
         world.addBody(ramp2);
     }
 
-    // ======================================================
-    // 🟢 THREE BUILD
-    // ======================================================
     buildThree(scene) {
 
         const size = this.size;
@@ -180,9 +163,7 @@ export class TowerModel {
 
         const rampMaterial = this.materials.ramp;
 
-        // =====================
-        // WALLS
-        // =====================
+      
         const wallXL = new THREE.BoxGeometry(visualThickness, height, size * 2);
         const wallXR = new THREE.BoxGeometry(visualThickness, height-4, size * 2 + 0.49);
         const wallZ = new THREE.BoxGeometry(size * 2, height, visualThickness);
@@ -215,7 +196,6 @@ export class TowerModel {
 
         wallsGroup.add(left, right, front, back);
 
-        //MERLI
         const crenelGroup = new THREE.Group();
         towerGroup.add(crenelGroup);
 
@@ -262,9 +242,7 @@ export class TowerModel {
             right.rotation.y = Math.PI / 2;
             crenelGroup.add(right);
         }
-        // =====================
-        // RAMPS
-        // =====================
+       
         const rampsGroup = new THREE.Group();
         towerGroup.add(rampsGroup);
 
@@ -348,17 +326,13 @@ export class TowerModel {
 
             t += 0.05;
 
-            // -------------------------
-            // FASE 1: SOLO SHAKE
-            // -------------------------
+           
             if (t < 10) {
                 towerGroup.rotation.z = Math.sin(t * 10) * 0.02;
                 towerGroup.rotation.x = Math.cos(t * 12) * 0.02;
             }
 
-            // -------------------------
-            // FASE 2: INIZIA CROLLO (UNA SOLA VOLTA)
-            // -------------------------
+            
             if (t >= 10 && !startedFall) {
 
                 startedFall = true;
@@ -395,9 +369,7 @@ export class TowerModel {
                 addGroup(rampsGroup, "ramp", 0.6);
             }
 
-            // -------------------------
-            // FASE 3: FISICA CROLLO
-            // -------------------------
+           
             pieces.forEach(p => {
 
                 if (p.settled) return;
@@ -428,13 +400,13 @@ export class TowerModel {
                     ) {
                         p.settled = true;
 
-                        // STOP TOTALE DINAMICA
+                        
                         p.vel.set(0, 0, 0);
                         p.rotVel.set(0, 0, 0);
 
-                        // IMPORTANTISSIMO: annulla rotazione residua “instabile”
+                        
                         p.obj.rotation.x = 0;
-                        p.obj.rotation.y = p.obj.rotation.y; // la manteniamo
+                        p.obj.rotation.y = p.obj.rotation.y; 
                         p.obj.rotation.z = 0;
 
                         if (p.type === "wall_left" || p.type === "wall_right") {
@@ -461,7 +433,6 @@ export class TowerModel {
                             p.obj.rotation.z = 0;
                         }
 
-                        // IMPORTANTISSIMO: forza anche posizione stabile
                         p.obj.position.y = groundY+0.05 + Math.random() * 0.1;
                     }
                     
