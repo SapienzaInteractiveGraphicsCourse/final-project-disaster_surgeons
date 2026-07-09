@@ -92,59 +92,7 @@ export class D20 {
         world.addBody(this.body);
 
         this.computeFaceNormals();
-
-        this.faceSprites = [];
-
-        for (let i = 1; i <= 20; i++) {
-            const sprite = this.createFace(i);
-
-            this.visual.add(sprite);
-            this.faceSprites.push(sprite);
-        }
     }
-
-//mettere i numeri sulle facce
-    createFace(number) {
-
-        const canvas = document.createElement("canvas");
-        canvas.width = 256;
-        canvas.height = 256;
-
-        const ctx = canvas.getContext("2d");
-
-        // sfondo bianco
-        ctx.fillStyle = "white";
-        ctx.fillRect(0, 0, 256, 256);
-
-        // bordo nero
-        ctx.strokeStyle = "black";
-        ctx.lineWidth = 10;
-        ctx.strokeRect(0, 0, 256, 256);
-
-        // numero
-        ctx.fillStyle = "black";
-        ctx.font = "bold 110px Arial";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(number.toString(), 128, 128);
-
-
-        const texture = new THREE.CanvasTexture(canvas);
-        texture.needsUpdate = true;
-
-        const material = new THREE.SpriteMaterial({
-            map: texture,
-            transparent: true
-        });
-
-        const sprite = new THREE.Sprite(material);
-
-        sprite.scale.set(0.4, 0.4, 0.4);
-
-        return sprite;
-    }
-
-
 
     computeFaceNormals() {
         const normals = [];

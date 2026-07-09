@@ -31,7 +31,6 @@ const rollD20Button = document.getElementById("rollD20");
 
 let zargosActive = false;
 
-
 const groundBody = new CANNON.Body({ mass: 0 });
 groundBody.addShape(new CANNON.Plane());
 groundBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
