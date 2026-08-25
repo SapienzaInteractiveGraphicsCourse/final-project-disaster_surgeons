@@ -157,6 +157,7 @@ export class D8 {
     }
 
     getValue() {
-        return this.faceValues[this.getTopFace()];
+        const face = this.getTopFace();
+        return face + 1;
     }
 }
